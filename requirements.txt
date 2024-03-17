@@ -208,7 +208,7 @@ nse==0.2.6.post2
 numba==0.58.1
 numpy==1.24.2
 oauthlib==3.2.2
-object_detection==0.1
+object_detection==0.0.3
 onnxruntime==1.16.3
 openai==1.10.0
 opencv-python==4.8.0.76
