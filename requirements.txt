@@ -1,5 +1,4 @@
-pickle
-streamlit 
+streamlit
 requests
 pandas
 numpy
