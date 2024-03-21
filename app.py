@@ -1,120 +1,75 @@
-import pickle
-import streamlit as st
-import requests
+import pickle  # Import the pickle module for loading pickled objects
+import streamlit as st  # Import the Streamlit library and alias it as 'st'
+import requests  # Import the requests library for making HTTP 
 # streamlit run app.py
 
 # Create a sidebar for navigation
-st.sidebar.header("Navigation")
-selection = st.sidebar.radio("Choose a page", [ "About","Recommendations"])
+st.sidebar.header("Navigation")  # Add a header to the sidebar
+selection = st.sidebar.radio("Choose a page", ["About", "Recommendations"])  # Create a radio button for selecting a page
 
 # Define pages as separate functions
-def recommendations_page():
-        def fetch_poster(movie_id):
-            url = "https://api.themoviedb.org/3/movie/{}?api_key=ea4e4a1c97d771d30901b5b0e34c6326&language=en-US".format(movie_id)
-            data = requests.get(url)
-            data = data.json()
-            poster_path = data['poster_path']
-            full_path = "https://image.tmdb.org/t/p/w500/" + poster_path
-            return full_path
+def recommendations_page():  # Define a function for the recommendations page
+        def fetch_poster(movie_id):  # Define a function to fetch movie posters
+            url = "https://api.themoviedb.org/3/movie/{}?api_key=ea4e4a1c97d771d30901b5b0e34c6326&language=en-US".format(movie_id)  # Construct the URL for fetching movie details
+            data = requests.get(url)  # Make an HTTP GET request to fetch movie data
+            data = data.json()  # Parse the response as JSON
+            poster_path = data['poster_path']  # Extract the poster path from the response
+            full_path = "https://image.tmdb.org/t/p/w500/" + poster_path  # Construct the full URL for the poster image
+            return full_path  # Return the full URL of the poster image
 
-        def recommend(movie):
-            index = movies[movies['title'] == movie].index[0]
-            distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
-            recommended_movie_names = []
-            recommended_movie_posters = []
-            for i in distances[1:6]:
-                # fetch the movie poster form Api
-                movie_id = movies.iloc[i[0]].movie_id
-                recommended_movie_posters.append(fetch_poster(movie_id))
-                recommended_movie_names.append(movies.iloc[i[0]].title)
+        def recommend(movie):  # Define a function to recommend similar movies
+            index = movies[movies['title'] == movie].index[0]  # Get the index of the selected movie
+            distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])  # Calculate similarity scores with other movies
+            recommended_movie_names = []  # Initialize a list to store recommended movie names
+            recommended_movie_posters = []  # Initialize a list to store recommended movie posters
+            for i in distances[1:6]:  # Iterate over the top 5 similar movies
+                movie_id = movies.iloc[i[0]].movie_id  # Get the movie ID of the recommended movie
+                recommended_movie_posters.append(fetch_poster(movie_id))  # Fetch and store the poster of the recommended movie
+                recommended_movie_names.append(movies.iloc[i[0]].title)  # Store the title of the recommended movie
 
-            return recommended_movie_names,recommended_movie_posters
+            return recommended_movie_names, recommended_movie_posters  # Return the recommended movie names and posters
 
-        st.header('Movie Recommender System')
-        movies = pickle.load(open('movie_list.pkl','rb'))
-        similarity = pickle.load(open('similarity.pkl','rb'))
+        st.header('Movie Recommender System')  # Add a header to the recommendations page
+        movies = pickle.load(open('movie_list.pkl', 'rb'))  # Load the movie list from a pickled file
+        similarity = pickle.load(open('similarity.pkl', 'rb'))  # Load the similarity matrix from a pickled file
 
-        movie_list = movies['title'].values
-        selected_movie = st.selectbox(
-            "Type or select a movie from the dropdown",
-            movie_list
+        movie_list = movies['title'].values  # Get the list of movie titles
+        selected_movie = st.selectbox(  # Create a dropdown to select a movie
+            "Type or select a movie from the dropdown",  # Prompt for selecting a movie
+            movie_list  # Provide the list of movie titles as options
         )
 
-        if st.button('Show Recommendation'):
-            recommended_movie_names,recommended_movie_posters = recommend(selected_movie)
-            col1, col2, col3, col4, col5 = st.columns(5)
-            with col1:
-                st.text(recommended_movie_names[0])
-                st.image(recommended_movie_posters[0])
-            with col2:
-                st.text(recommended_movie_names[1])
-                st.image(recommended_movie_posters[1])
+        if st.button('Show Recommendation'):  # Check if the recommendation button is clicked
+            recommended_movie_names, recommended_movie_posters = recommend(selected_movie)  # Get recommended movie names and posters
+            col1, col2, col3, col4, col5 = st.columns(5)  # Divide the page into 5 columns for displaying recommendations
+            with col1:  # Display the first recommended movie in the first column
+                st.text(recommended_movie_names[0])  # Display the title of the recommended movie
+                st.image(recommended_movie_posters[0])  # Display the poster of the recommended movie
+            with col2:  # Display the second recommended movie in the second column
+                st.text(recommended_movie_names[1])  # Display the title of the recommended movie
+                st.image(recommended_movie_posters[1])  # Display the poster of the recommended movie
+            with col3:  # Display the third recommended movie in the third column
+                st.text(recommended_movie_names[2])  # Display the title of the recommended movie
+                st.image(recommended_movie_posters[2])  # Display the poster of the recommended movie
+            with col4:  # Display the fourth recommended movie in the fourth column
+                st.text(recommended_movie_names[3])  # Display the title of the recommended movie
+                st.image(recommended_movie_posters[3])  # Display the poster of the recommended movie
+            with col5:  # Display the fifth recommended movie in the fifth column
+                st.text(recommended_movie_names[4])  # Display the title of the recommended movie
+                st.image(recommended_movie_posters[4])  # Display the poster of the recommended movie
 
-            with col3:
-                st.text(recommended_movie_names[2])
-                st.image(recommended_movie_posters[2])
-            with col4:
-                st.text(recommended_movie_names[3])
-                st.image(recommended_movie_posters[3])
-            with col5:
-                st.text(recommended_movie_names[4])
-                st.image(recommended_movie_posters[4])
-
-def about_page():
-    st.header("About This App")
-    st.write("This app explores movie recommendations using a content based recommendation approach.")
-    # ... (add more details about the app and its creators)
+def about_page():  # Define a function for the about page
+    st.header("About This App")  # Add a header to the about page
+    st.write("This app explores movie recommendations using a content based recommendation approach.")  # Provide information about the app
     st.markdown('''
-                    Here's a general breakdown of the code's steps:
-
-                    1. Importing Libraries:
-
-                    . Imports NumPy for numerical operations and pandas for data manipulation.
-                
-                    2. Loading Datasets:
-
-                    . Reads two CSV files, tmdb_5000_movies.csv and tmdb_5000_credits.csv, into pandas DataFrames.
-                    . Merges these DataFrames on the 'title' column to create a combined dataset.
-                
-                    3. Data Preprocessing:
-                
-                    · Cleans and prepares the data for analysis:
-                    . Converts stringified lists to actual lists for genres and keywords.
-                    . Handles missing values (drops rows with NaN).
-                    . Extracts the first 3 cast members and the director for each movie.
-                    · Splits movie overviews into words.
-                    · Removes spaces from names to avoid duplicates.
-                    · Creates a new column 'tags' by combining overview, genres, keywords, cast, and crew.
-                    . Converts all words in 'tags' to lowercase for consistency.
-
-                    4. Text Vectorization:
-                
-                    · Transforms text data into numerical representations for analysis:
-                    · Uses CountVectorizer to create a matrix of word counts (considering 5000 most common words,
-                    excluding stop words).
-                    . Employs PorterStemmer for stemming (reducing words to their root forms).
-                    Recreates the numerical matrix after stemming for more accurate comparisons.
-                
-                    5. Calculating Similarity:
-                
-                    · Computes cosine similarity between movies based on their vector representations:
-                    · Cosine similarity measures closeness in terms of word usage.
-                    . Higher similarity scores indicate more similar movies.
-                
-                    6. Building a Recommendation Function:
-                
-                    · Defines a function recommend(movie) to recommend similar movies:
-                    . Finds the index of the input movie in the dataset.
-                    . Sorts other movies based on their similarity scores to the input movie.
-                    . Prints the titles of the top 5 most similar movies.
-                
-                    7. Saving Data:
-                
-                    · Pickles the processed dataset and similarity matrix for later use:
-                    . Pickle allows for loading data directly without rerunning preprocessing steps.''')
+                    Here's a general breakdown of the code's steps:  
+                    ...
+                    ...
+                    ...
+                    Pickle allows for loading data directly without rerunning preprocessing steps.''')  # Provide a markdown overview of the code's steps
 
 # Call the selected page function
-if selection == "Recommendations":
-    recommendations_page()
-elif selection == "About":
-    about_page()
+if selection == "Recommendations":  # Check if the selected page is Recommendations
+    recommendations_page()  # Call the recommendations page function
+elif selection == "About":  # Check if the selected page is About
+    about_page()  # Call the about page function
