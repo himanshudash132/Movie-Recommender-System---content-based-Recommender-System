@@ -10,7 +10,8 @@ Welcome to the Movie Recommender System repository! This project focuses on buil
 
 The content-based recommendation system analyzes the attributes of movies such as genre, cast, director, and plot keywords to suggest similar movies. This approach is based on the assumption that if a user likes a particular movie, they are likely to enjoy movies with similar characteristics.
 
-Screenshot.png
+![Screenshot](https://github.com/himanshudash132/Movie-Recommender-System---content-based-Recommender-System/raw/main/Screenshot.png)
+
 
 ## Features
 
